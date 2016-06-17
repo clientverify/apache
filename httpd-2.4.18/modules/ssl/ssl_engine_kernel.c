@@ -2015,12 +2015,51 @@ static void log_tracing_state(const SSL *ssl, conn_rec *c,
      * right after a finished handshake.
      */
     if (where & SSL_CB_HANDSHAKE_DONE) {
+#ifdef OPENSSL_NO_SSL_INTERN
         ap_log_cerror(APLOG_MARK, APLOG_DEBUG, 0, c, APLOGNO(02041)
-                      "Protocol: %s, Cipher: %s (%s/%s bits)",
-                      ssl_var_lookup(NULL, s, c, NULL, "SSL_PROTOCOL"),
+                      "Protocol: %s, Cipher: %s (%s/%s bits) %s",
+		      ssl_var_lookup(NULL, s, c, NULL, "SSL_PROTOCOL"),
                       ssl_var_lookup(NULL, s, c, NULL, "SSL_CIPHER"),
                       ssl_var_lookup(NULL, s, c, NULL, "SSL_CIPHER_USEKEYSIZE"),
                       ssl_var_lookup(NULL, s, c, NULL, "SSL_CIPHER_ALGKEYSIZE"));
+#else
+	ap_log_cerror(APLOG_MARK, APLOG_DEBUG, 0, c, APLOGNO(02041)
+                      "Protocol: %s, Cipher: %s (%s/%s bits) %s",
+		      ssl_var_lookup(NULL, s, c, NULL, "SSL_PROTOCOL"),
+                      ssl_var_lookup(NULL, s, c, NULL, "SSL_CIPHER"),
+                      ssl_var_lookup(NULL, s, c, NULL, "SSL_CIPHER_USEKEYSIZE"),
+                      ssl_var_lookup(NULL, s, c, NULL, "SSL_CIPHER_ALGKEYSIZE"));
+        
+	int size = 48;
+	unsigned char* buf = ssl->session->master_key;
+	int i;
+	char* buf_str = (char*) malloc (3*size + 1);
+	char* buf_ptr = buf_str;
+	for (i = 0; i < size; i++)
+	{
+    		buf_ptr += sprintf(buf_ptr, "%02X:", (unsigned)(buf[i]));
+	}
+	*(buf_ptr) = '\0';
+
+	int size_clnt = 32;
+	unsigned char* buf_clnt = ssl->s3->client_random;
+	char* buf_str_clnt = (char*) malloc (3*size_clnt + 1);
+	char* buf_ptr_clnt = buf_str_clnt;
+	for (i = 0; i < size_clnt; i++)
+	{
+    		buf_ptr_clnt += sprintf(buf_ptr_clnt, "%02X:", (unsigned)(buf_clnt[i]));
+	}
+	*(buf_ptr_clnt) = '\0';
+
+
+	ap_log_cerror(APLOG_MARK, APLOG_DEBUG, 0, c, APLOGNO(02041)
+		      "%s MS: %s CR: %s",
+		      "HAPPY TUESDAY!!!2",
+		      buf_str,
+		      buf_str_clnt);
+	free(buf_str);
+	free(buf_str_clnt);
+#endif
     }
 }
 
