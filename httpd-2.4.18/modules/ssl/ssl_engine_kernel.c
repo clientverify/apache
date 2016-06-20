@@ -2030,14 +2030,14 @@ static void log_tracing_state(const SSL *ssl, conn_rec *c,
                       ssl_var_lookup(NULL, s, c, NULL, "SSL_CIPHER_USEKEYSIZE"),
                       ssl_var_lookup(NULL, s, c, NULL, "SSL_CIPHER_ALGKEYSIZE"));
         
-	int size = 48;
-	unsigned char* buf = ssl->session->master_key;
 	int i;
-	char* buf_str = (char*) malloc (3*size + 1);
-	char* buf_ptr = buf_str;
-	for (i = 0; i < size; i++)
+	int ms_sz = 48;
+	unsigned char* ssl_ms = ssl->session->master_key;
+	char* ms_buf = (char*) malloc (3*ms_sz + 1);
+	char* buf_ptr = ms_buf;
+	for (i = 0; i < ms_sz; i++)
 	{
-    		buf_ptr += sprintf(buf_ptr, "%02X:", (unsigned)(buf[i]));
+    		buf_ptr += sprintf(buf_ptr, "%02X:", (unsigned)(ssl_ms[i]));
 	}
 	*(buf_ptr) = '\0';
 
@@ -2055,9 +2055,9 @@ static void log_tracing_state(const SSL *ssl, conn_rec *c,
 	ap_log_cerror(APLOG_MARK, APLOG_DEBUG, 0, c, APLOGNO(02041)
 		      "%s MS: %s CR: %s",
 		      "HAPPY TUESDAY!!!2",
-		      buf_str,
+		      ms_buf,
 		      buf_str_clnt);
-	free(buf_str);
+	free(ms_buf);
 	free(buf_str_clnt);
 #endif
     }
