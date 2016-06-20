@@ -2041,24 +2041,24 @@ static void log_tracing_state(const SSL *ssl, conn_rec *c,
 	}
 	*(buf_ptr) = '\0';
 
-	int size_clnt = 32;
-	unsigned char* buf_clnt = ssl->s3->client_random;
-	char* buf_str_clnt = (char*) malloc (3*size_clnt + 1);
-	char* buf_ptr_clnt = buf_str_clnt;
-	for (i = 0; i < size_clnt; i++)
+	int cr_sz = 32;
+	unsigned char* ssl_cr = ssl->s3->client_random;
+	char* cr_buf = (char*) malloc (3*cr_sz + 1);
+	char* p = cr_buf;
+	for (i = 0; i < cr_sz; i++)
 	{
-    		buf_ptr_clnt += sprintf(buf_ptr_clnt, "%02X:", (unsigned)(buf_clnt[i]));
+    		p += sprintf(p, "%02X:", (unsigned)(ssl_cr[i]));
 	}
-	*(buf_ptr_clnt) = '\0';
+	*(p) = '\0';
 
 
 	ap_log_cerror(APLOG_MARK, APLOG_DEBUG, 0, c, APLOGNO(02041)
 		      "%s MS: %s CR: %s",
 		      "HAPPY TUESDAY!!!2",
 		      ms_buf,
-		      buf_str_clnt);
+		      cr_buf);
 	free(ms_buf);
-	free(buf_str_clnt);
+	free(cr_buf);
 #endif
     }
 }
