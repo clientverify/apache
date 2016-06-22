@@ -26,6 +26,8 @@
 #ifndef __MOD_SSL_H__
 #define __MOD_SSL_H__
 
+#define SSL_OP_NO_TICKET
+
 #include "httpd.h"
 #include "apr_optional.h"
 

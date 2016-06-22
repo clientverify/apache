@@ -602,6 +602,11 @@ static apr_status_t ssl_init_ctx_protocol(server_rec *s,
         SSL_CTX_set_mode(ctx, SSL_MODE_RELEASE_BUFFERS);
 #endif
 
+#ifdef SSL_OP_NO_TICKET
+    /* Disable session tickets. */
+    SSL_CTX_set_options(ctx, SSL_OP_NO_TICKET); 
+#endif
+
     return APR_SUCCESS;
 }
 
