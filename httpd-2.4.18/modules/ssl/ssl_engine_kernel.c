@@ -2029,27 +2029,27 @@ static void log_tracing_state(const SSL *ssl, conn_rec *c,
                       ssl_var_lookup(NULL, s, c, NULL, "SSL_CIPHER"),
                       ssl_var_lookup(NULL, s, c, NULL, "SSL_CIPHER_USEKEYSIZE"),
                       ssl_var_lookup(NULL, s, c, NULL, "SSL_CIPHER_ALGKEYSIZE"));
-        
+
 	int i;
 	int ms_sz = 48;
 	unsigned char* ssl_ms = ssl->session->master_key;
 	char* ms_buf = (char*) malloc (3*ms_sz + 1);
-	char* buf_ptr = ms_buf;
+	char* ms_p = ms_buf;
 	for (i = 0; i < ms_sz; i++)
 	{
-    		buf_ptr += sprintf(buf_ptr, "%02X:", (unsigned)(ssl_ms[i]));
+    		ms_p += sprintf(ms_p, "%02X:", (unsigned)(ssl_ms[i]));
 	}
-	*(buf_ptr) = '\0';
+	*(ms_p) = '\0';
 
 	int cr_sz = 32;
 	unsigned char* ssl_cr = ssl->s3->client_random;
 	char* cr_buf = (char*) malloc (3*cr_sz + 1);
-	char* p = cr_buf;
+	char* cr_p = cr_buf;
 	for (i = 0; i < cr_sz; i++)
 	{
-    		p += sprintf(p, "%02X:", (unsigned)(ssl_cr[i]));
+    		cr_p += sprintf(cr_p, "%02X:", (unsigned)(ssl_cr[i]));
 	}
-	*(p) = '\0';
+	*(cr_p) = '\0';
 
 
 	ap_log_cerror(APLOG_MARK, APLOG_DEBUG, 0, c, APLOGNO(02041)
